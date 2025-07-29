@@ -45,18 +45,6 @@ doctorRouter.get("/profile", async (req, res) => {
 
     //try and catch block to catch any errors.
     try {
-        
-
-         //get Doctor's id from decoded varable that is passed when token generated.
-        const Doctorid = decoded.DoctorId;
-
-        //get the existing Doctor by their id and capture in existDoctor variabe.
-        const existDoctor = await DoctorModel.findById(Doctorid);
-
-        //return Doctor not found response when existDoctor is false.
-        if (!existDoctor) {
-            return res.json({ msg: "Doctor not found!" });
-        }
 
         //find Doctor by id and populate their recipe and store in getAllDoctor variable.
         const getAllDoctor = await DoctorModel.find()
@@ -64,7 +52,7 @@ doctorRouter.get("/profile", async (req, res) => {
        
     } 
     catch (err) {
-        
+        console.log("catch error", err)
     }
 })
 
