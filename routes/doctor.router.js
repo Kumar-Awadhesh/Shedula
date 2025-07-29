@@ -45,21 +45,7 @@ doctorRouter.get("/profile", async (req, res) => {
 
     //try and catch block to catch any errors.
     try {
-         //get the token from authorization if exist, and split by space to get the second element as token.
-        const token = req.headers.authorization?.split(" ")[1];
-
-        //return please login response when token is false.
-        if (!token) {
-            return res.json({ msg: "PLease Login!" });
-        }
         
-        //verify token wether its valid and genuine or not, and capture the value in decoded variable.
-        const decoded = jwt.verify(token, "shedula");
-
-        //return inavalid token response when decoded is false.
-        if (!decoded) {
-            return res.json({ msg: "invalid token!" });
-        }
 
          //get Doctor's id from decoded varable that is passed when token generated.
         const Doctorid = decoded.DoctorId;
@@ -72,24 +58,10 @@ doctorRouter.get("/profile", async (req, res) => {
             return res.json({ msg: "Doctor not found!" });
         }
 
-        //check the Doctor role and authorized accordingly.
-        if (existDoctor?.role === "user") {
-            //find Doctor by id and populate their recipe and store in getDoctor variable.
-            const getDoctor = await DoctorModel.findById(Doctorid)
-            //return getDoctor in response.
-            return res.json({ msg: getDoctor });
-        }
-
-        //check the Doctor role and authorized accordingly.
-        else if (existDoctor?.role === "admin") {
-             //find Doctor by id and populate their recipe and store in getAllDoctor variable.
-            const getAllDoctor = await DoctorModel.find()
-            return res.json({ msg: getAllDoctor });
-        }
-        else {
-            //return not authorized response.
-            return res.json({ msg: "You are not authorized!" });
-        }
+        //find Doctor by id and populate their recipe and store in getAllDoctor variable.
+        const getAllDoctor = await DoctorModel.find()
+        return res.json({ msg: getAllDoctor });
+       
     } 
     catch (err) {
         
