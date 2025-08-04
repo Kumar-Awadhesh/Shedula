@@ -2,8 +2,7 @@ const express = require("express"); //imoport express.
 const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { AppointmentModel } = require("../models/appointment.model"); // import User Model from models.
-const {UserModel} = require("../models/user.model");
-const { default: Doctor } = require("../../Shedula-FE/vite-project/src/components/doctor");
+const {UserModel} = require("../models/user.model"); // import user model to verify user.
 
 
 const appointmentRouter = express.Router();
