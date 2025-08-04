@@ -11,7 +11,7 @@ const appointmentRouter = express.Router();
 appointmentRouter.post("/book", async (req, res) => {
 
     //get and destructure name/phone/email/password/role from req body.
-    const { name, time, image, role, address } = req.body;
+    const { name, time, image, designation, doctorId, address } = req.body;
 
     //try and catch block to catch any errors.
     try {
@@ -28,8 +28,9 @@ appointmentRouter.post("/book", async (req, res) => {
         } 
         //get user's id from decoded varable that is passed when token generated.
         const userid = decoded.userId;
+
         //check if User already registerd.
-        const existUser = await UserModel.findOne({ userid });
+        const existUser = await UserModel.findById(userid);
 
         //return already registered response if User exist.
         if (!existUser) {
@@ -37,7 +38,7 @@ appointmentRouter.post("/book", async (req, res) => {
         }
        
         //set Appointment detail in data base and store in variable newAppointment
-        const newAppointment = new AppointmentModel({ name, time, image, role, address, userid: userid });
+        const newAppointment = new AppointmentModel({ name, time, image, address, designation, doctorId, userid: userid });
 
         //save the Appointment in data base and return registered successfully response.
         await newAppointment.save();

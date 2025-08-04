@@ -6,18 +6,12 @@ const doctorSchema = new mongoose.Schema({
     phone: {type: String, required: true, unique: true},
     email: {type: String, required: true, unique: true, lowecase: true, match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill valid email"]},
     password: {type: String, required: true},
-    role: {type: String, required: true},
+    designation: {type: String, required: true},
     address: {type: String, required: true}
 }, {
     versionKey: false
 })
 
-doctorSchema.virtual("appointment", {
-    ref: "appointment",
-    localField: "_id",
-    foreignField: "userid",
-    justOne: false
-})
 
 const DoctorModel = mongoose.model("doctor", doctorSchema);
 module.exports = {DoctorModel};
