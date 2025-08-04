@@ -4,9 +4,10 @@ const appointmentSchema = new mongoose.Schema({
     name: {type: String, required: true},
     time: {type: Date, required: true, unique: true},
     image: {type: String, required: true, unique: true},
-    role: {type: String, required: true},
+    designation: {type: String, required: true},
+    doctorId: {type: String, required: true},
     address: {type: String, required: true},
-    userid: {type: mongoose.Schema.ObjectId, ref: "user", required: true}
+    userid: {type: mongoose.Schema.ObjectId, ref: "user", required: true},
 }, {
     versionKey: false,
     toJSON: {virtuals: true}
@@ -14,9 +15,10 @@ const appointmentSchema = new mongoose.Schema({
 
 appointmentSchema.virtual("user", {
     ref: "user",
-    localField: "userid",
-    foreignField: "_id"
+    localField: "_id",
+    foreignField: "userid"
 })
+
 
 const AppointmentModel = mongoose.model("appointment",appointmentSchema);
 module.exports = {AppointmentModel}

@@ -2,31 +2,47 @@ const express = require("express"); //imoport express.
 const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { AppointmentModel } = require("../models/appointment.model"); // import User Model from models.
+const {UserModel} = require("../models/user.model");
+const { default: Doctor } = require("../../Shedula-FE/vite-project/src/components/doctor");
+
 
 const appointmentRouter = express.Router();
 
 //asynchronous funtion to register Doctor.
-appointmentRouter.post("/register", async (req, res) => {
+appointmentRouter.post("/book", async (req, res) => {
 
     //get and destructure name/phone/email/password/role from req body.
     const { name, time, image, role, address } = req.body;
 
     //try and catch block to catch any errors.
     try {
-        //check if Appointment already registerd.
-        const existAppointment = await AppointmentModel.findOne({ name });
+        const token = req.headers.authorization?.split(" ")[1]
+         //return please login response when token is false.
+        if(!token){
+            return res.json({msg: "PLease Login!"});
+        }
+        //verify token wether its valid and genuine or not, and capture the value in decoded variable.
+        const decoded = jwt.verify(token, "shedula");
+        //return inavalid token response when decoded is false.
+        if(!decoded){
+            return res.json({msg: "invalid token!"});
+        } 
+        //get user's id from decoded varable that is passed when token generated.
+        const userid = decoded.userId;
+        //check if User already registerd.
+        const existUser = await UserModel.findOne({ userid });
 
-        //return already registered response if Appointment exist.
-        if (existAppointment) {
-            return res.json({ msg: "Appointment already Registerd" });
+        //return already registered response if User exist.
+        if (!existUser) {
+            return res.json({ msg: "User not found!" });
         }
        
         //set Appointment detail in data base and store in variable newAppointment
-        const newAppointment = new AppointmentModel({ name, time, image, role, address });
+        const newAppointment = new AppointmentModel({ name, time, image, role, address, userid: userid });
 
         //save the Appointment in data base and return registered successfully response.
         await newAppointment.save();
-        res.json({ msg: "Appointment Registerd Successfully!" });
+        res.json({ msg: "Appointment Booked Successfully!" });
     }
     catch (err) {
         //log any error if catch.
@@ -35,7 +51,7 @@ appointmentRouter.post("/register", async (req, res) => {
 })
 
 //asynchronous funtion to get the Appointment profile.
-appointmentRouter.get("/profile", async (req, res) => {
+appointmentRouter.get("/getAppointment", async (req, res) => {
 
     //try and catch block to catch any errors.
     try {
@@ -48,7 +64,7 @@ appointmentRouter.get("/profile", async (req, res) => {
         }
         
         //verify token wether its valid and genuine or not, and capture the value in decoded variable.
-        const decoded = jwt.verify(token, "recipe");
+        const decoded = jwt.verify(token, "shedula");
 
         //return inavalid token response when decoded is false.
         if (!decoded) {
@@ -56,26 +72,32 @@ appointmentRouter.get("/profile", async (req, res) => {
         }
 
          //get Appointment's id from decoded varable that is passed when token generated.
-        const Appointmentid = decoded.AppointmentId;
+        const userId = decoded.userid;
 
-        //get the existing Appointment by their id and capture in existAppointment variabe.
-        const existAppointment = await AppointmentModel.findById(Appointmentid);
+        //get the existing User by their id and capture in existUser variabe.
+        const existUser = await UserModel.findById(userId);
 
-        //return Appointment not found response when existAppointment is false.
-        if (!existAppointment) {
-            return res.json({ msg: "Appointment not found!" });
+        //return User not found response when existUser is false.
+        if (!existUser) {
+            return res.json({ msg: "User not found!" });
         }
 
-        //check the Appointment role and authorized accordingly.
-        if (existAppointment?.role === "user") {
-            //find Appointment by id and populate their recipe and store in getAppointment variable.
-            const getAppointment = await AppointmentModel.findById(Appointmentid)
+        //check the User role and authorized accordingly.
+        if (existUser?.role === "user") {
+            //find Appointment by id and populate their appointment and store in getAppointment variable.
+            const getAppointment = await AppointmentModel.findById(userId)
             //return getAppointment in response.
             return res.json({ msg: getAppointment });
         }
 
-        //check the Appointment role and authorized accordingly.
-        else if (existAppointment?.role === "admin") {
+
+
+        //---------------------------------------- Need to Change when Doctor's Login Page Create----------------------------------------------------
+
+
+
+        //check the User role and authorized accordingly.
+        else if (existUser?.role === "doctor") {
              //find Appointment by id and populate their recipe and store in getAllAppointment variable.
             const getAllAppointment = await AppointmentModel.find()
             return res.json({ msg: getAllAppointment });

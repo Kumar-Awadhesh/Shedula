@@ -16,8 +16,8 @@ const userSchema = new mongoose.Schema({
 })
 
 //crate refference, user to appointment.
-userSchema.virtual("recipe", {
-    ref: "recipe",
+userSchema.virtual("appointment", {
+    ref: "appointment",
     localField: "_id", //user's id.
     foreignField: "userid", //appointment's userid.
     justOne: false //to show all the recipe created by user/array of objects of recipe.
