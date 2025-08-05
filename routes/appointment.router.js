@@ -11,7 +11,7 @@ const appointmentRouter = express.Router();
 appointmentRouter.post("/book", async (req, res) => {
 
     //get and destructure name/phone/email/password/role from req body.
-    const { name, time, image, designation, doctorId, address } = req.body;
+    const { name, time, date, image, designation, doctorId, address } = req.body;
 
     //try and catch block to catch any errors.
     try {
@@ -38,15 +38,22 @@ appointmentRouter.post("/book", async (req, res) => {
         }
        
         //set Appointment detail in data base and store in variable newAppointment
-        const newAppointment = new AppointmentModel({ name, time, image, address, designation, doctorId, userid: userid });
+        const newAppointment = new AppointmentModel({ name, time, date, image, address, designation, doctorId, userid: userid });
 
+        //check if any appointment already exixt.
+        const existAppointment = await AppointmentModel.findOne({doctorId});
+        
+        //check if same appointment already exist.
+        if(existAppointment?.doctorId?.toString() === doctorId){
+           return res.json({msg: "Appointment already booked !"})
+        }
         //save the Appointment in data base and return registered successfully response.
         await newAppointment.save();
         res.json({ msg: "Appointment Booked Successfully!" });
     }
     catch (err) {
         //log any error if catch.
-        console.log("catch error", err);
+        console.log("catch error:", err)
     }
 })
 

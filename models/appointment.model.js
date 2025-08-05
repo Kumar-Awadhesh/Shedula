@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    time: {type: Date, required: true, unique: true},
+    date: {type: Date, required: true, unique: true},
+    time: {type: String, required:true},
     image: {type: String, required: true, unique: true},
     designation: {type: String, required: true},
     doctorId: {type: String, required: true},
