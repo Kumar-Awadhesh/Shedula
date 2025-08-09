@@ -56,6 +56,62 @@ doctorRouter.get("/profile", async (req, res) => {
     }
 })
 
+//asynchronous funtion to get the user profile.
+userRouter.get("/doctorProfile", async (req, res) => {
+
+    //try and catch block to catch any errors.
+    try {
+         //get the token from authorization if exist, and split by space to get the second element as token.
+        const token = req.headers.authorization?.split(" ")[1];
+
+        //return please login response when token is false.
+        if (!token) {
+            return res.json({ msg: "PLease Login!" });
+        }
+        
+        //verify token wether its valid and genuine or not, and capture the value in decoded variable.
+        const decoded = jwt.verify(token, "shedula");
+
+        //return inavalid token response when decoded is false.
+        if (!decoded) {
+            return res.json({ msg: "invalid token!" });
+        }
+
+         //get user's id from decoded varable that is passed when token generated.
+        const userid = decoded.userId;
+
+        //get the existing user by their id and capture in existUser variabe.
+        const existUser = await UserModel.findById(userid);
+
+        //return user not found response when existUser is false.
+        if (!existUser) {
+            return res.json({ msg: "User not found!" });
+        }
+
+        //check the user role and authorized accordingly.
+        if (existUser?.role === "doctor") {
+            //find user by id and populate their recipe and store in getUser variable.
+            const getUser = await UserModel.findById(userid).populate("appointment");
+            //return getUser in response.
+            return res.json({ msg: getUser });
+        }
+
+        //check the user role and authorized accordingly.
+        else if (existUser?.role === "admin") {
+             //find user by id and populate their recipe and store in getAllUser variable.
+            const getAllUser = await UserModel.find().populate("appointment");
+            return res.json({ msg: getAllUser });
+        }
+        else {
+            //return not authorized response.
+            return res.json({ msg: "You are not authorized!" });
+        }
+    } 
+    catch (err) {
+        
+    }
+})
+
 
 
 // export Doctor router.

@@ -11,7 +11,7 @@ const appointmentRouter = express.Router();
 appointmentRouter.post("/book", async (req, res) => {
 
     //get and destructure name/phone/email/password/role from req body.
-    const { name, time, date, image, designation, doctorId, address } = req.body;
+    const { name, time, patientName, date, image, designation, doctorId, address } = req.body;
 
     //try and catch block to catch any errors.
     try {
@@ -38,7 +38,7 @@ appointmentRouter.post("/book", async (req, res) => {
         }
        
         //set Appointment detail in data base and store in variable newAppointment
-        const newAppointment = new AppointmentModel({ name, time, date, image, address, designation, doctorId, userid: userid });
+        const newAppointment = new AppointmentModel({ name, time, patientName, date, image, address, designation, doctorId, userid: userid });
 
         //check if any appointment already exixt.
         const existAppointment = await AppointmentModel.findOne({doctorId});
@@ -92,7 +92,7 @@ appointmentRouter.get("/getAppointment", async (req, res) => {
         //check the User role and authorized accordingly.
         if (existUser?.role === "user") {
             //find Appointment by id and populate their appointment and store in getAppointment variable.
-            const getAppointment = await AppointmentModel.findById(userId)
+            const getAppointment = await AppointmentModel.findById(userId).populate("user");
             //return getAppointment in response.
             return res.json({ msg: getAppointment });
         }
