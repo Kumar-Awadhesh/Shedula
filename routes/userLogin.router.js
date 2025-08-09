@@ -2,7 +2,7 @@ const express = require("express"); //import express.
 const bcrypt = require("bcrypt"); //import bcrypt to compare the encrypted password
 const jwt = require("jsonwebtoken"); //import jsonwebtoken to generate token.
 const {UserModel} = require("../models/user.model"); // import user model from models to access user model.
-const {DoctorModel} = require("../models/doctor.model");
+const {DoctorModel} = require("../models/doctor.model"); // import doctor model from models to access doctor model.
 
 //create login router using express router.
 const loginRouter = express.Router(); 

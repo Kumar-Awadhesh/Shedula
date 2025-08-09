@@ -57,7 +57,7 @@ doctorRouter.get("/profile", async (req, res) => {
 })
 
 //asynchronous funtion to get the user profile.
-userRouter.get("/doctorProfile", async (req, res) => {
+doctorRouter.get("/doctorProfile", async (req, res) => {
 
     //try and catch block to catch any errors.
     try {
