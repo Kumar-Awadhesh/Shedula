@@ -81,7 +81,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         const userid = decoded.userId;
 
         //get the existing user by their id and capture in existUser variabe.
-        const existUser = await UserModel.findById(userid);
+        const existUser = await DoctorModel.findById(userid);
 
         //return user not found response when existUser is false.
         if (!existUser) {
@@ -91,7 +91,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         //check the user role and authorized accordingly.
         if (existUser?.role === "doctor") {
             //find user by id and populate their recipe and store in getUser variable.
-            const getUser = await UserModel.findById(userid).populate("appointment");
+            const getUser = await DoctorModel.findById(userid).populate("appointment");
             //return getUser in response.
             return res.json({ msg: getUser });
         }
@@ -99,7 +99,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         //check the user role and authorized accordingly.
         else if (existUser?.role === "admin") {
              //find user by id and populate their recipe and store in getAllUser variable.
-            const getAllUser = await UserModel.find().populate("appointment");
+            const getAllUser = await DoctorModel.find().populate("appointment");
             return res.json({ msg: getAllUser });
         }
         else {
