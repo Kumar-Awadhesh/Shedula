@@ -2,7 +2,7 @@ const express = require("express"); //imoport express.
 const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { PrescriptionModel } = require("../models/prescription.model"); // import User Model from models.
-const {UserModel} = require("../models/user.model"); // import user model to verify user.
+const {DoctorModel} = require("../models/doctor.model"); // import user model to verify user.
 
 
 const prescriptionRouter = express.Router();
@@ -28,10 +28,11 @@ prescriptionRouter.post("/addPrescription", async (req, res) => {
         } 
         //get user's id from decoded varable that is passed when token generated.
         const userid = decoded.userId;
+        console.log(userid)
 
         //check if User already registerd.
-        const existUser = await UserModel.findById(userid);
-
+        const existUser = await DoctorModel.findById(userid);
+        console.log(existUser)
         //return already registered response if User exist.
         if (!existUser) {
             return res.json({ msg: "User not found!" });
@@ -43,13 +44,13 @@ prescriptionRouter.post("/addPrescription", async (req, res) => {
         }
        
         //set Prescription detail in data base and store in variable newPrescription
-        const newPrescription = new PrescriptionModel({ medicine, dosage, description, patientId, userId: userid },{new:true});
+        const newPrescription = new PrescriptionModel({ medicine, dosage, description, patientId, userId: userid });
 
         //check if any Prescription already exixt.
         const existPrescription = await PrescriptionModel.findOne({medicine});
         
         //check if same Prescription already exist.
-        if(existPrescription?.medicine.toString() === medicine){
+        if(existPrescription?.medicine?.toString() === medicine){
            return res.json({msg: "Prescription already added !"})
         }
         //save the Prescription in data base and return registered successfully response.
@@ -85,10 +86,10 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
         }
 
          //get Prescription's id from decoded varable that is passed when token generated.
-        const userId = decoded.userid;
+        const userId = decoded.userId;
 
         //get the existing User by their id and capture in existUser variabe.
-        const existUser = await UserModel.findById(userId);
+        const existUser = await DoctorModel.findById(userId);
 
         //return User not found response when existUser is false.
         if (!existUser) {
@@ -98,7 +99,7 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
         //check the User role and authorized accordingly.
         if (existUser?.role === "user") {
             //find Prescription by id and populate their Prescription and store in getPrescription variable.
-            const getPrescription = await PrescriptionModel.find(patientId);
+            const getPrescription = await PrescriptionModel.find({patientId});
             //return getPrescription in response.
             return res.json({ msg: getPrescription });
         }
@@ -123,8 +124,9 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
 
 prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
     const {medicine, dosage, description, patientId} = req.body;
+    const id = req.params.id;
     try {
-        const token = headers.authorization?.split(" ")[1];
+        const token = req.headers.authorization?.split(" ")[1];
 
         if(!token){
             res.json({msg: "PLease Login!"})
@@ -137,7 +139,7 @@ prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
 
         const userId = decoded.userId;
 
-        const existUser = await UserModel.findById(userId);
+        const existUser = await DoctorModel.findById(userId);
 
         if(!existUser){
             return res.json({msg: "User Not Found!"});
@@ -146,8 +148,9 @@ prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
         if(existUser.role !== "doctor"){
             return res.json({msg: "You are not Authorized!"});
         }
-
-        const updatePrescription = await PrescriptionModel.findOneAndUpdate({userId}, {medicine, dosage, description, patientId});
+       
+        const updatePrescription = await PrescriptionModel.findByIdAndUpdate(id, {medicine, dosage, description, patientId});
+        
         await updatePrescription.save();
         res.json({msg: "Prescription Updated Successfully!"})
 
@@ -158,10 +161,11 @@ prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
     }
 })
 
-prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
+prescriptionRouter.delete("/deletePrescription/:id", async(req, res) => {
     const {medicine, dosage, description, patientId} = req.body;
+    const id = req.params.id;
     try {
-        const token = headers.authorization?.split(" ")[1];
+        const token = req.headers.authorization?.split(" ")[1];
 
         if(!token){
             res.json({msg: "PLease Login!"})
@@ -174,7 +178,7 @@ prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
 
         const userId = decoded.userId;
 
-        const existUser = await UserModel.findById(userId);
+        const existUser = await DoctorModel.findById(userId);
 
         if(!existUser){
             return res.json({msg: "User Not Found!"});
@@ -184,8 +188,7 @@ prescriptionRouter.patch("/updatePrescription/:id", async(req, res) => {
             return res.json({msg: "You are not Authorized!"});
         }
 
-        const updatePrescription = await PrescriptionModel.findOneAndDelete({userId}, {medicine, dosage, description, patientId});
-        await updatePrescription.save();
+        await PrescriptionModel.findByIdAndDelete(id, {medicine, dosage, description, patientId});
         res.json({msg: "Prescription Deleted Successfully!"})
 
     } 
