@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const prescriptionSchema = new mongoose.Schema({
     medicine: {type: String, required: true},
-    dosages: {type: String, required: true},
+    dosage: {type: String, required: true},
     description: {type: String},
+    patientId: {type: String, required: true},
     userId: {type: mongoose.Schema.ObjectId, ref: "doctor", required: true}
 },{
     versionKey: false,
@@ -16,5 +17,5 @@ prescriptionSchema.virtual("doctor", {
     foreignField: "_id"
 })
 
-const PresciptionModel = mongoose.model("prescription", prescriptionSchema);
-module.exports = {PresciptionModel};
+const PrescriptionModel = mongoose.model("prescription", prescriptionSchema);
+module.exports = {PrescriptionModel};

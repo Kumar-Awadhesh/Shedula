@@ -98,15 +98,10 @@ appointmentRouter.get("/getAppointment", async (req, res) => {
         }
 
 
-
-        //---------------------------------------- Need to Change when Doctor's Login Page Create----------------------------------------------------
-
-
-
         //check the User role and authorized accordingly.
         else if (existUser?.role === "doctor") {
              //find Appointment by id and populate their recipe and store in getAllAppointment variable.
-            const getAllAppointment = await AppointmentModel.find()
+            const getAllAppointment = await AppointmentModel.find({doctorId})
             return res.json({ msg: getAllAppointment });
         }
         else {

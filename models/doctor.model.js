@@ -17,6 +17,7 @@ doctorSchema.virtual("prescription", {
     ref: "prescription",
     localField: "_id",
     foreignField: "userId"
+    
 })
 
 

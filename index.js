@@ -6,6 +6,7 @@ const {userRouter} = require("./routes/userSignup.router"); //import user router
 const {appointmentRouter} = require("./routes/appointment.router"); //import recipe router from routes.
 const {loginRouter} = require("./routes/userLogin.router"); //import login router from routes
 const {doctorRouter} = require("./routes/doctor.router")
+const {prescriptionRouter} = require("./routes/prescription.router")
 
 const app = express(); //initilize app variable to store express access.
 app.use(express.json()); //initialize express json to 
@@ -16,6 +17,7 @@ app.use("/user", userRouter); //user's endpoint/routes.
 app.use("/appointment", appointmentRouter); //appointment's endpoint/routes.
 app.use("/login", loginRouter); //login endpoint/routes
 app.use("/doctor", doctorRouter) //doctor's endpoint/routes.
+app.use('/prescription', prescriptionRouter)
 
 //server local host initilizing.
 app.listen(3201, async() => {

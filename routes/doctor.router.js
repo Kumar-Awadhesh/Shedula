@@ -3,13 +3,14 @@ const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { DoctorModel } = require("../models/doctor.model"); // import User Model from models.
 
+
 const doctorRouter = express.Router();
 
 //asynchronous funtion to register Doctor.
 doctorRouter.post("/register", async (req, res) => {
 
     //get and destructure name/phone/email/password/role from req body.
-    const { name, image, phone, email, password, role, address } = req.body;
+    const { name, designation, image, phone, email, password, role, address } = req.body;
 
     //try and catch block to catch any errors.
     try {
@@ -28,7 +29,7 @@ doctorRouter.post("/register", async (req, res) => {
             return res.json({ msg: "failed to create password!" });
         }
         //set Doctor detail in data base and store in variable newDoctor
-        const newDoctor = new DoctorModel({ name, image, phone, email, password: hash, role, address });
+        const newDoctor = new DoctorModel({ name, designation, image, phone, email, password: hash, role, address });
 
         //save the Doctor in data base and return registered successfully response.
         await newDoctor.save();
@@ -91,7 +92,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         //check the user role and authorized accordingly.
         if (existUser?.role === "doctor") {
             //find user by id and populate their recipe and store in getUser variable.
-            const getUser = await DoctorModel.findById(userid).populate("appointment");
+            const getUser = await DoctorModel.findById(userid).populate("prescription");
             //return getUser in response.
             return res.json({ msg: getUser });
         }
@@ -99,7 +100,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         //check the user role and authorized accordingly.
         else if (existUser?.role === "admin") {
              //find user by id and populate their recipe and store in getAllUser variable.
-            const getAllUser = await DoctorModel.find().populate("appointment");
+            const getAllUser = await DoctorModel.find().populate("prescription");
             return res.json({ msg: getAllUser });
         }
         else {
@@ -108,7 +109,8 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
         }
     } 
     catch (err) {
-        
+        console.log("catch error", err)
+        res.json({msg:err.message})
     }
 })
 

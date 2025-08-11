@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema({
     name: {type: String, required: true},
+    patientName: {type: String, required: true},
     date: {type: Date, required: true, unique: true},
     time: {type: String, required:true},
     image: {type: String, required: true, unique: true},
@@ -16,8 +17,8 @@ const appointmentSchema = new mongoose.Schema({
 
 appointmentSchema.virtual("user", {
     ref: "user",
-    localField: "_id",
-    foreignField: "userid"
+    localField: "userid",
+    foreignField: "_id"
 })
 
 
