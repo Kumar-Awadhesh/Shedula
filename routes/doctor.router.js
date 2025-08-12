@@ -83,7 +83,7 @@ doctorRouter.get("/doctorProfile", async (req, res) => {
 
         //get the existing user by their id and capture in existUser variabe.
         const existUser = await DoctorModel.findById(userid);
-
+        
         //return user not found response when existUser is false.
         if (!existUser) {
             return res.json({ msg: "User not found!" });

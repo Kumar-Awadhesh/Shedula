@@ -108,7 +108,7 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
         //check the User role and authorized accordingly.
         else if (existUser?.role === "doctor") {
              //find Prescription by id and populate their recipe and store in getAllPrescription variable.
-            const getAllPrescription = await PrescriptionModel.findById(userId)
+            const getAllPrescription = await PrescriptionModel.findById(userId).populate("doctor");
             return res.json({ msg: getAllPrescription });
         }
         else {

@@ -2,7 +2,7 @@ const express = require("express"); //imoport express.
 const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { AppointmentModel } = require("../models/appointment.model"); // import User Model from models.
-const {UserModel} = require("../models/user.model"); // import user model to verify user.
+const {DoctorModel} = require("../models/doctor.model"); // import user model to verify user.
 
 
 const appointmentRouter = express.Router();
@@ -30,7 +30,7 @@ appointmentRouter.post("/book", async (req, res) => {
         const userid = decoded.userId;
 
         //check if User already registerd.
-        const existUser = await UserModel.findById(userid);
+        const existUser = await DoctorModel.findById(userid);
 
         //return already registered response if User exist.
         if (!existUser) {
@@ -79,11 +79,11 @@ appointmentRouter.get("/getAppointment", async (req, res) => {
         }
 
          //get Appointment's id from decoded varable that is passed when token generated.
-        const userId = decoded.userid;
+        const userId = decoded.userId;
 
         //get the existing User by their id and capture in existUser variabe.
-        const existUser = await UserModel.findById(userId);
-
+        const existUser = await DoctorModel.findById(userId);
+        console.log(existUser)
         //return User not found response when existUser is false.
         if (!existUser) {
             return res.json({ msg: "User not found!" });
@@ -100,8 +100,9 @@ appointmentRouter.get("/getAppointment", async (req, res) => {
 
         //check the User role and authorized accordingly.
         else if (existUser?.role === "doctor") {
-             //find Appointment by id and populate their recipe and store in getAllAppointment variable.
-            const getAllAppointment = await AppointmentModel.find({doctorId})
+            const doctorId = existUser._id.toString();
+            //find Appointment by id and store in getAllAppointment variable.
+            const getAllAppointment = await AppointmentModel.find({doctorId}).populate('user');
             return res.json({ msg: getAllAppointment });
         }
         else {
