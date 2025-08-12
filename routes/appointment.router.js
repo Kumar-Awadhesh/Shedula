@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt"); //import bcrypt.
 const jwt = require("jsonwebtoken"); //import jsonwebtoken
 const { AppointmentModel } = require("../models/appointment.model"); // import User Model from models.
 const {DoctorModel} = require("../models/doctor.model"); // import user model to verify user.
+const {UserModel} = require("../models/user.model")
 
 
 const appointmentRouter = express.Router();
@@ -30,7 +31,7 @@ appointmentRouter.post("/book", async (req, res) => {
         const userid = decoded.userId;
 
         //check if User already registerd.
-        const existUser = await DoctorModel.findById(userid);
+        const existUser = await UserModel.findById(userid);
 
         //return already registered response if User exist.
         if (!existUser) {
