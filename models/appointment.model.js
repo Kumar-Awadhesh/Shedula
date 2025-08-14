@@ -18,7 +18,8 @@ const appointmentSchema = new mongoose.Schema({
 appointmentSchema.virtual("user", {
     ref: "user",
     localField: "userid",
-    foreignField: "_id"
+    foreignField: "_id",
+    justOne: false
 })
 
 

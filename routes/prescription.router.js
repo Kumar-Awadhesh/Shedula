@@ -91,7 +91,7 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
 
         //get the existing User by their id and capture in existUser variabe.
         const existUser = await DoctorModel.findById(userId);
-
+        
         //return User not found response when existUser is false.
         if (!existUser) {
             return res.json({ msg: "User not found!" });
@@ -105,11 +105,11 @@ prescriptionRouter.get("/getPrescription", async (req, res) => {
             return res.json({ msg: getPrescription });
         }
 
-
         //check the User role and authorized accordingly.
         else if (existUser?.role === "doctor") {
              //find Prescription by id and populate their recipe and store in getAllPrescription variable.
-            const getAllPrescription = await PrescriptionModel.findById(userId).populate("doctor");
+            const getAllPrescription = await PrescriptionModel.find({userId}).populate("doctor");
+           
             return res.json({ msg: getAllPrescription });
         }
         else {

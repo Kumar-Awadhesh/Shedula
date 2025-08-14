@@ -10,14 +10,15 @@ const doctorSchema = new mongoose.Schema({
     address: {type: String, required: true},
     role: {type: String, default: "doctor", required:true}
 }, {
-    versionKey: false
+    versionKey: false,
+    toJSON:{virtuals: true}
 })
 
 doctorSchema.virtual("prescription", {
     ref: "prescription",
     localField: "_id",
-    foreignField: "userId"
-    
+    foreignField: "userId",
+    justOne: false
 })
 
 

@@ -14,7 +14,8 @@ const prescriptionSchema = new mongoose.Schema({
 prescriptionSchema.virtual("doctor", {
     ref: "doctor",
     localField: "userId",
-    foreignField: "_id"
+    foreignField: "_id",
+    justOne: false
 })
 
 const PrescriptionModel = mongoose.model("prescription", prescriptionSchema);

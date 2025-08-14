@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     phone: {type: String, required: true, unique: true},
     email: {type: String, required: true, unique: true, lowercase: true, match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill valid email"]},
     password: {type: String, required: true},
-    role: {type: String, enum: ["user", "admin"], default: "user", required: true},
+    role: {type: String, enum: ["user", "doctor"], default: "user", required: true},
 },{
     // prevent the version control of application.
     versionKey: false,
