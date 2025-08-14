@@ -45,8 +45,8 @@ appointmentRouter.post("/book", async (req, res) => {
         const existAppointment = await AppointmentModel.findOne({doctorId});
         
         //check if same appointment already exist.
-        if(existAppointment?.doctorId?.toString() === doctorId){
-           return res.json({msg: "Appointment already booked !"})
+        if(existAppointment?.doctorId?.toString() === doctorId || existAppointment?.date?.toString() === date.toString() || existAppointment?.time?.toString() === time.toString()){
+           return res.json({msg: "Date or Time Slote not available !"})
         }
         //save the Appointment in data base and return registered successfully response.
         await newAppointment.save();
@@ -55,6 +55,7 @@ appointmentRouter.post("/book", async (req, res) => {
     catch (err) {
         //log any error if catch.
         console.log("catch error:", err)
+        res.json({msg: err.message});
     }
 })
 
