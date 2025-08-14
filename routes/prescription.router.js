@@ -42,17 +42,18 @@ prescriptionRouter.post("/addPrescription", async (req, res) => {
         if(existUser.role !== "doctor"){
             return res.json({msg: "You are not Authorized!"});
         }
-       
-        //set Prescription detail in data base and store in variable newPrescription
-        const newPrescription = new PrescriptionModel({ medicine, dosage, description, patientId, userId: userid });
 
-        //check if any Prescription already exixt.
+        //get prescription from data base by medicine name.
         const existPrescription = await PrescriptionModel.findOne({medicine});
         
         //check if same Prescription already exist.
         if(existPrescription?.medicine?.toString() === medicine){
            return res.json({msg: "Prescription already added !"})
         }
+       
+        //set Prescription detail in data base and store in variable newPrescription
+        const newPrescription = new PrescriptionModel({ medicine, dosage, description, patientId, userId: userid });
+
         //save the Prescription in data base and return registered successfully response.
         await newPrescription.save();
         res.json({ msg: "Prescription Added Successfully!" });
